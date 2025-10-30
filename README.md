@@ -59,17 +59,15 @@ Built with a modern Swift/SwiftUI architecture, QuitAll is fast, secure, and res
 
 ## Screenshots
 
-### Main Interface
-![Main Interface](docs/assets/screenshots/main-interface.png)
-*Clean list of running applications with whitelist toggles*
+### Main Interface and Menu Bar Integration
+![Main Interface](public/asset/screens/main.png)
+
+*Clean, whitelisted app list with seamless macOS menu bar integration.*
 
 ### Settings View
-![Settings](docs/assets/screenshots/settings.png)
-*Configure persistent whitelist and preferences*
+![Settings](public/asset/screens/setting.png)
 
-### Menu Bar Integration
-![Menu Bar](docs/assets/screenshots/menu-bar.png)
-*Seamless macOS menu bar integration*
+*Configure persistent whitelist and preferences*
 
 ## Installation
 
@@ -80,12 +78,6 @@ Built with a modern Swift/SwiftUI architecture, QuitAll is fast, secure, and res
 3. Move `QuitAll.app` to your `/Applications` folder
 4. Right-click and select "Open" (first time only, to bypass Gatekeeper)
 5. The app will appear in your menu bar
-
-### Install via Homebrew (Coming Soon)
-
-```bash
-brew install --cask quitall
-```
 
 ### Building from Source
 
