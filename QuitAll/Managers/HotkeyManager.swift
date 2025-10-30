@@ -140,6 +140,7 @@ extension KeyboardShortcuts.Name {
 #if DEBUG
 extension HotkeyManager {
     /// Print current status for debugging
+    @MainActor
     func printStatus() {
         print("🎹 HotkeyManager Status:")
         print("  Enabled: \(isEnabled)")
