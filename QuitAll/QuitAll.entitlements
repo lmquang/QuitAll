@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	CRITICAL: App Sandbox is DISABLED
+
+	Reason: Sandboxed apps cannot call NSRunningApplication.terminate() on other apps.
+	This is a non-negotiable requirement for QuitAll's core functionality.
+
+	See ADR-004 for full justification.
+	-->
+
+	<!-- Hardened Runtime enabled via Build Settings (not in entitlements) -->
+	<!-- No additional entitlements required for our use case -->
+</dict>
+</plist>
