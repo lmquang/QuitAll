@@ -61,5 +61,9 @@
 	<array>
 		<string>MacOSX</string>
 	</array>
+
+	<!-- Input Monitoring Permission (for global hotkeys) -->
+	<key>NSSystemAdministrationUsageDescription</key>
+	<string>QuitAll needs Input Monitoring permission to listen for your custom global hotkey. This allows you to quit all apps with a keyboard shortcut from anywhere in macOS.</string>
 </dict>
 </plist>

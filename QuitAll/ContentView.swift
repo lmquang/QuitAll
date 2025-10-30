@@ -15,6 +15,7 @@ struct ContentView: View {
     @ObservedObject var whitelistManager: WhitelistManager
     @ObservedObject var preferencesManager: PreferencesManager
     @ObservedObject var quitManager: QuitManager
+    @ObservedObject var hotkeyManager: HotkeyManager
 
     @State private var showSettings = false
 
@@ -31,7 +32,8 @@ struct ContentView: View {
             if showSettings {
                 SettingsView(
                     preferencesManager: preferencesManager,
-                    whitelistManager: whitelistManager
+                    whitelistManager: whitelistManager,
+                    hotkeyManager: hotkeyManager
                 )
             } else {
                 mainContent
@@ -112,7 +114,8 @@ struct ContentView_Previews: PreviewProvider {
             appManager: AppManager(),
             whitelistManager: WhitelistManager(),
             preferencesManager: PreferencesManager(),
-            quitManager: QuitManager()
+            quitManager: QuitManager(),
+            hotkeyManager: HotkeyManager { }
         )
     }
 }

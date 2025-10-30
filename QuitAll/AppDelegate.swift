@@ -20,6 +20,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var whitelistManager = WhitelistManager()
     private lazy var preferencesManager = PreferencesManager()
     private lazy var quitManager = QuitManager()
+    private lazy var hotkeyManager = HotkeyManager { [weak self] in
+        self?.triggerQuitAllFromHotkey()
+    }
 
     // MARK: - App Lifecycle
 
@@ -159,7 +162,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             appManager: appManager,
             whitelistManager: whitelistManager,
             preferencesManager: preferencesManager,
-            quitManager: quitManager
+            quitManager: quitManager,
+            hotkeyManager: hotkeyManager
         )
 
         // Host SwiftUI view
@@ -203,5 +207,39 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         alert.alertStyle = .informational
         alert.addButton(withTitle: "OK")
         alert.runModal()
+    }
+
+    // MARK: - Hotkey Actions
+
+    private func triggerQuitAllFromHotkey() {
+        print("🎹 Quit All triggered by hotkey")
+
+        // Get all apps to quit (filter out whitelisted)
+        let appsToQuit = appManager.runningApps.filter { app in
+            !whitelistManager.isWhitelisted(bundleID: app.bundleIdentifier)
+        }
+
+        guard !appsToQuit.isEmpty else {
+            print("ℹ️ No apps to quit (all protected or no apps running)")
+            return
+        }
+
+        // Trigger quit all
+        quitManager.quitAllApps(
+            apps: appsToQuit,
+            whitelistManager: whitelistManager,
+            onProgress: { app, result in
+                // Optional: Handle individual app progress
+                switch result {
+                case .success:
+                    print("  ✅ Quit: \(app.name)")
+                case .failure(let error):
+                    print("  ❌ Failed to quit \(app.name): \(error.localizedDescription ?? "Unknown")")
+                }
+            },
+            onComplete: {
+                print("✅ Hotkey quit all complete")
+            }
+        )
     }
 }

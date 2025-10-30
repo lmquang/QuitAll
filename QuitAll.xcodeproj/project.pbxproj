@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		74E0A7C42EB397370091F823 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 74E0A7C32EB397370091F823 /* KeyboardShortcuts */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		741C47F22EB33FB7001F9A0C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				74E0A7C42EB397370091F823 /* KeyboardShortcuts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = QuitAll;
 			packageProductDependencies = (
+				74E0A7C32EB397370091F823 /* KeyboardShortcuts */,
 			);
 			productName = QuitAll;
 			productReference = 741C47E32EB33FB5001F9A0C /* QuitAll.app */;
@@ -195,6 +201,9 @@
 			);
 			mainGroup = 741C47DA2EB33FB5001F9A0C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				74E0A7C22EB393B20091F823 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 741C47E42EB33FB5001F9A0C /* Products */;
 			projectDirPath = "";
@@ -549,6 +558,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		74E0A7C22EB393B20091F823 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		74E0A7C32EB397370091F823 /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 74E0A7C22EB393B20091F823 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 741C47DB2EB33FB5001F9A0C /* Project object */;
 }

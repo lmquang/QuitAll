@@ -329,7 +329,11 @@ If you find QuitAll useful, consider supporting its development:
 
 QuitAll is free and open source, built with love in my spare time. If it saves you time or makes your life easier, consider buying me a [coffee](https://www.buymeacoffee.com/quanglm)!
 
-![alt text](public/asset/buymecoffee.PNG)
+  <div align="center">
+    <img src="public/asset/buymecoffee.PNG" alt="Buy Me A Coffee QR Code" width="200"/>
+    <p>Scan to support this project</p>
+  </div>
+
 
 **Bitcoin (BTC):** `bc1qgalaj8mafuqnf3qswzr7sjzk9tjlhad2jvez7e`
 
