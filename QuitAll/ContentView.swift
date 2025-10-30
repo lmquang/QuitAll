@@ -85,7 +85,8 @@ struct ContentView: View {
             // App list
             AppListView(
                 appManager: appManager,
-                whitelistManager: whitelistManager
+                whitelistManager: whitelistManager,
+                quitManager: quitManager
             )
 
             Divider()

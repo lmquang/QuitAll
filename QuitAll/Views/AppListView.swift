@@ -13,6 +13,7 @@ struct AppListView: View {
 
     @ObservedObject var appManager: AppManager
     @ObservedObject var whitelistManager: WhitelistManager
+    @ObservedObject var quitManager: QuitManager
 
     @State private var searchQuery = ""
 
@@ -47,6 +48,12 @@ struct AppListView: View {
             sectionHeader
 
             Divider()
+
+            // Column header (only show when apps exist)
+            if !filteredApps.isEmpty {
+                columnHeader
+                Divider()
+            }
 
             // App list or empty state
             if filteredApps.isEmpty {
@@ -101,13 +108,44 @@ struct AppListView: View {
         .background(Color(nsColor: .controlBackgroundColor).opacity(0.5))
     }
 
+    private var columnHeader: some View {
+        HStack(spacing: 12) {
+            // App icon and name column
+            HStack(spacing: 12) {
+                // Spacer for icon
+                Color.clear.frame(width: 32, height: 1)
+                Text("Application")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+
+            // Quit column
+            Text("Quit")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundColor(.secondary)
+                .frame(width: 40, alignment: .center)
+
+            // Protect column
+            Text("Protect")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundColor(.secondary)
+                .frame(width: 60, alignment: .center)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
+        .background(Color(nsColor: .controlBackgroundColor).opacity(0.3))
+    }
+
     private var appList: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
                 ForEach(filteredApps) { app in
                     AppRowView(
                         app: app,
-                        whitelistManager: whitelistManager
+                        whitelistManager: whitelistManager,
+                        quitManager: quitManager
                     )
 
                     if app.id != filteredApps.last?.id {
@@ -158,7 +196,8 @@ struct AppListView_Previews: PreviewProvider {
     static var previews: some View {
         AppListView(
             appManager: AppManager(),
-            whitelistManager: WhitelistManager()
+            whitelistManager: WhitelistManager(),
+            quitManager: QuitManager()
         )
         .frame(width: 360, height: 400)
         .onAppear {

@@ -13,8 +13,12 @@ struct AppRowView: View {
 
     let app: AppInfo
     @ObservedObject var whitelistManager: WhitelistManager
+    @ObservedObject var quitManager: QuitManager
 
     @State private var isHovered = false
+    @State private var isQuitting = false
+    @State private var showAlert = false
+    @State private var alertMessage = ""
 
     // MARK: - Computed Properties
 
@@ -46,10 +50,12 @@ struct AppRowView: View {
             Spacer()
 
             if isSystemProtected {
-                // Protected badge for system apps
-                protectedBadge
+                // System protected apps: no quit button, disabled checkbox
+                Color.clear.frame(width: 40)
+                protectedCheckbox
             } else {
-                // Whitelist toggle for user apps
+                // User apps: quit button and checkbox
+                quitButton
                 whitelistToggle
             }
         }
@@ -63,22 +69,45 @@ struct AppRowView: View {
             isHovered = hovering
         }
         .help(isSystemProtected ? "System apps cannot be quit" : app.bundleIdentifier)
+        .alert("Quit App", isPresented: $showAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(alertMessage)
+        }
     }
 
     // MARK: - Subviews
 
-    private var protectedBadge: some View {
-        Text("Protected")
-            .font(.caption)
-            .foregroundColor(.secondary)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(Color.gray.opacity(0.2))
-            .cornerRadius(4)
+    private var quitButton: some View {
+        Button(action: {
+            quitSingleApp()
+        }) {
+            if isQuitting {
+                ProgressView()
+                    .controlSize(.small)
+                    .frame(width: 16, height: 16)
+            } else {
+                Image(systemName: isHovered ? "xmark.circle.fill" : "xmark.circle")
+                    .foregroundColor(.secondary)
+                    .opacity(isHovered ? 1.0 : 0.6)
+            }
+        }
+        .buttonStyle(.plain)
+        .frame(width: 40, alignment: .center)
+        .disabled(isQuitting || isWhitelisted)
+        .help(isWhitelisted ? "Uncheck 'Protect' to quit this app" : "Quit \(app.name)")
+    }
+
+    private var protectedCheckbox: some View {
+        Toggle("", isOn: .constant(true))
+            .toggleStyle(.checkbox)
+            .disabled(true)
+            .help("System app - always protected")
+            .frame(width: 60, alignment: .center)
     }
 
     private var whitelistToggle: some View {
-        Toggle("Protect", isOn: Binding(
+        Toggle("", isOn: Binding(
             get: { isWhitelisted },
             set: { isOn in
                 if isOn {
@@ -88,8 +117,49 @@ struct AppRowView: View {
                 }
             }
         ))
-        .toggleStyle(.switch)
+        .toggleStyle(.checkbox)
         .help(isWhitelisted ? "Protected - won't be quit" : "Not protected - will be quit")
+        .frame(width: 60, alignment: .center)
+    }
+
+    // MARK: - Actions
+
+    private func quitSingleApp() {
+        guard !isQuitting else { return }
+
+        // Safety check - system protection
+        guard SystemProtection.canQuit(app.nsRunningApp) else {
+            alertMessage = "Cannot quit system app: \(app.name)"
+            showAlert = true
+            return
+        }
+
+        // Check if whitelisted
+        if isWhitelisted {
+            alertMessage = "\(app.name) is protected. Uncheck 'Protect' to quit it."
+            showAlert = true
+            return
+        }
+
+        isQuitting = true
+
+        // Quit the app
+        quitManager.quitApp(app.nsRunningApp) { result in
+            DispatchQueue.main.async {
+                isQuitting = false
+
+                switch result {
+                case .success:
+                    print("✅ Successfully quit: \(app.name)")
+                    // App will disappear from list automatically via AppManager monitoring
+
+                case .failure(let error):
+                    alertMessage = "Failed to quit \(app.name): \(error.localizedDescription ?? "Unknown error")"
+                    showAlert = true
+                    print("❌ Failed to quit \(app.name): \(error)")
+                }
+            }
+        }
     }
 }
 
@@ -103,7 +173,8 @@ struct AppRowView_Previews: PreviewProvider {
             if let app = createMockApp(name: "Safari", bundleID: "com.apple.Safari") {
                 AppRowView(
                     app: app,
-                    whitelistManager: WhitelistManager()
+                    whitelistManager: WhitelistManager(),
+                    quitManager: QuitManager()
                 )
             }
 
@@ -113,7 +184,8 @@ struct AppRowView_Previews: PreviewProvider {
             if let app = createMockApp(name: "Finder", bundleID: "com.apple.finder") {
                 AppRowView(
                     app: app,
-                    whitelistManager: WhitelistManager()
+                    whitelistManager: WhitelistManager(),
+                    quitManager: QuitManager()
                 )
             }
         }
