@@ -59,15 +59,13 @@ Built with a modern Swift/SwiftUI architecture, QuitAll is fast, secure, and res
 
 ## Screenshots
 
-### Main Interface and Menu Bar Integration
-![Main Interface](public/asset/screens/main.png)
+<div align="center">
 
-*Clean, whitelisted app list with seamless macOS menu bar integration.*
+| Main Interface |  Settings View |
+| :---: | :---: |
+| <img src="public/asset/screens/main.png" width="250"> | <img src="public/asset/screens/setting.png" width="250"> |
 
-### Settings View
-![Settings](public/asset/screens/setting.png)
-
-*Configure persistent whitelist and preferences*
+</div>
 
 ## Installation
 
@@ -329,13 +327,14 @@ If you find QuitAll useful, consider supporting its development:
 
 QuitAll is free and open source, built with love in my spare time. If it saves you time or makes your life easier, consider buying me a [coffee](https://www.buymeacoffee.com/quanglm)!
 
-  <div align="center">
-    <img src="public/asset/buymecoffee.PNG" alt="Buy Me A Coffee QR Code" width="200"/>
-    <p>Scan to support this project</p>
-  </div>
+<div align="center">
 
+| Buy Me a Coffee |  BTC |
+| :---: | :---: |
+| <img src="public/asset/buymecoffee.PNG" width="250"> | <img src="public/asset/btc_address_qr.png" width="250"> |
+| https://www.buymeacoffee.com/quanglm | bc1qgalaj8mafuqnf3qswzr7sjzk9tjlhad2jvez7e |
 
-**Bitcoin (BTC):** `bc1qgalaj8mafuqnf3qswzr7sjzk9tjlhad2jvez7e`
+</div>
 
 **Other Ways to Support:**
 - ⭐ Star this repository
