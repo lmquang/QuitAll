@@ -18,15 +18,11 @@ struct HeaderView: View {
 
     var body: some View {
         HStack(spacing: Spacing.sm) {
-            Text("Running Apps")
+            Text("Quit All")
                 .font(Typography.popoverTitle)
                 .foregroundColor(Colors.primary)
 
             Spacer()
-
-            Text("\(appCount)")
-                .font(Typography.count)
-                .foregroundColor(Colors.secondary)
 
             Button(action: onSettingsTap) {
                 Image(systemName: "gearshape")
