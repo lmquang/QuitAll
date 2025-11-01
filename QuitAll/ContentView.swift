@@ -47,11 +47,19 @@ struct ContentView: View {
                     whitelistManager: whitelistManager,
                     hotkeyManager: hotkeyManager
                 )
+                .transition(.asymmetric(
+                    insertion: .move(edge: .trailing).combined(with: .opacity),
+                    removal: .move(edge: .trailing).combined(with: .opacity)
+                ))
             } else {
                 // Main app list view with header
                 HeaderView(
                     appCount: appManager.runningAppCount,
-                    onSettingsTap: { showSettings = true }
+                    onSettingsTap: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showSettings = true
+                        }
+                    }
                 )
 
                 Divider()
@@ -69,6 +77,10 @@ struct ContentView: View {
                     isDisabled: appsToQuit.isEmpty,
                     isQuitting: isQuitting
                 )
+                .transition(.asymmetric(
+                    insertion: .move(edge: .leading).combined(with: .opacity),
+                    removal: .move(edge: .leading).combined(with: .opacity)
+                ))
             }
         }
         .frame(width: Dimensions.popoverWidth)
@@ -111,7 +123,11 @@ struct ContentView: View {
 
     private var settingsHeader: some View {
         HStack {
-            Button(action: { showSettings = false }) {
+            Button(action: {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showSettings = false
+                }
+            }) {
                 HStack(spacing: Spacing.xxs) {
                     Image(systemName: "chevron.left")
                     Text("Back")

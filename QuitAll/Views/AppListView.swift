@@ -134,7 +134,7 @@ struct AppListView: View {
                 .foregroundColor(Colors.secondary)
                 .frame(width: 60, alignment: .center)
         }
-        .padding(.horizontal, Spacing.xs)
+        .padding(.horizontal, Spacing.md)
         .padding(.vertical, 6)
         .background(Colors.controlBackground.opacity(0.3))
     }
