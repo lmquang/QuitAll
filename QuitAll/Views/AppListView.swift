@@ -69,73 +69,74 @@ struct AppListView: View {
     private var searchBar: some View {
         HStack {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(.secondary)
+                .foregroundColor(Colors.tertiary)
 
             TextField("Search apps...", text: $searchQuery)
                 .textFieldStyle(.plain)
+                .font(Typography.appName)
 
             if !searchQuery.isEmpty {
                 Button(action: { searchQuery = "" }) {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.secondary)
+                        .foregroundColor(Colors.tertiary)
                 }
                 .buttonStyle(.plain)
             }
         }
-        .padding(8)
-        .background(Color(nsColor: .controlBackgroundColor))
+        .padding(Spacing.xs)
+        .background(Colors.controlBackground)
         .cornerRadius(8)
-        .padding(.horizontal)
-        .padding(.vertical, 8)
+        .padding(.horizontal, Spacing.md)
+        .padding(.vertical, Spacing.xs)
     }
 
     private var sectionHeader: some View {
         HStack {
             if searchQuery.isEmpty {
                 Text("Running Apps (\(appCount))")
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.secondary)
+                    .font(Typography.subtitle.weight(.bold))
+                    .foregroundColor(Colors.secondary)
             } else {
                 Text("Showing \(displayedCount) of \(appCount) apps")
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.secondary)
+                    .font(Typography.subtitle.weight(.bold))
+                    .foregroundColor(Colors.secondary)
             }
 
             Spacer()
         }
-        .padding(.horizontal)
-        .padding(.vertical, 8)
-        .background(Color(nsColor: .controlBackgroundColor).opacity(0.5))
+        .padding(.horizontal, Spacing.md)
+        .padding(.vertical, Spacing.xs)
+        .background(Colors.controlBackground.opacity(0.5))
     }
 
     private var columnHeader: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: Spacing.sm) {
             // App icon and name column
-            HStack(spacing: 12) {
+            HStack(spacing: Spacing.sm) {
                 // Spacer for icon
-                Color.clear.frame(width: 32, height: 1)
+                Color.clear.frame(width: Dimensions.iconSize, height: 1)
                 Text("Application")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(.secondary)
+                    .font(Typography.subtitle.weight(.semibold))
+                    .foregroundColor(Colors.secondary)
             }
 
             Spacer()
 
             // Quit column
             Text("Quit")
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(.secondary)
+                .font(Typography.subtitle.weight(.semibold))
+                .foregroundColor(Colors.secondary)
                 .frame(width: 40, alignment: .center)
 
             // Protect column
             Text("Protect")
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(.secondary)
+                .font(Typography.subtitle.weight(.semibold))
+                .foregroundColor(Colors.secondary)
                 .frame(width: 60, alignment: .center)
         }
-        .padding(.horizontal, 8)
+        .padding(.horizontal, Spacing.xs)
         .padding(.vertical, 6)
-        .background(Color(nsColor: .controlBackgroundColor).opacity(0.3))
+        .background(Colors.controlBackground.opacity(0.3))
     }
 
     private var appList: some View {
@@ -159,33 +160,47 @@ struct AppListView: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: Spacing.md) {
             if searchQuery.isEmpty {
                 // No apps running
-                Text("🎉")
-                    .font(.system(size: 48))
+                Image(systemName: "checkmark.circle")
+                    .font(.system(size: Dimensions.iconSizeLarge, weight: .light))
+                    .foregroundColor(Colors.tertiary)
+                    .symbolRenderingMode(.hierarchical)
+                    .accessibilityHidden(true)
 
-                Text("No apps running!")
-                    .font(.title2.bold())
+                VStack(spacing: Spacing.xs) {
+                    Text("No Apps Running")
+                        .font(Typography.emptyStateTitle)
+                        .foregroundColor(Colors.primary)
 
-                Text("Your workspace is clean.")
-                    .font(.body)
-                    .foregroundColor(.secondary)
+                    Text("Your workspace is clean")
+                        .font(Typography.description)
+                        .foregroundColor(Colors.secondary)
+                        .multilineTextAlignment(.center)
+                }
             } else {
                 // No search results
-                Text("🔍")
-                    .font(.system(size: 48))
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: Dimensions.iconSizeLarge, weight: .light))
+                    .foregroundColor(Colors.tertiary)
+                    .symbolRenderingMode(.hierarchical)
+                    .accessibilityHidden(true)
 
-                Text("No apps match \"\(searchQuery)\"")
-                    .font(.title3.bold())
+                VStack(spacing: Spacing.xs) {
+                    Text("No Results")
+                        .font(Typography.emptyStateTitle)
+                        .foregroundColor(Colors.primary)
 
-                Text("Try a different search term.")
-                    .font(.body)
-                    .foregroundColor(.secondary)
+                    Text("Try a different search term")
+                        .font(Typography.description)
+                        .foregroundColor(Colors.secondary)
+                        .multilineTextAlignment(.center)
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding()
+        .padding(Spacing.md)
     }
 }
 

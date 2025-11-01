@@ -18,34 +18,69 @@ struct ContentView: View {
     @ObservedObject var hotkeyManager: HotkeyManager
 
     @State private var showSettings = false
+    @State private var isQuitting = false
+
+    // Accessibility: Detect Reduce Transparency preference
+    @Environment(\.accessibilityReduceTransparency) var reduceTransparency
+
+    // MARK: - Computed Properties
+
+    private var appsToQuit: [AppInfo] {
+        appManager.runningApps.filter { app in
+            !whitelistManager.isWhitelisted(bundleID: app.bundleIdentifier)
+        }
+    }
 
     // MARK: - Body
 
     var body: some View {
         VStack(spacing: 0) {
-            // Header
-            header
-
-            Divider()
-
-            // Main content
             if showSettings {
+                // Settings header
+                settingsHeader
+
+                Divider()
+
+                // Settings content
                 SettingsView(
                     preferencesManager: preferencesManager,
                     whitelistManager: whitelistManager,
                     hotkeyManager: hotkeyManager
                 )
             } else {
-                mainContent
+                // Main app list view with header
+                HeaderView(
+                    appCount: appManager.runningAppCount,
+                    onSettingsTap: { showSettings = true }
+                )
+
+                Divider()
+
+                // App list (scrollable content)
+                AppListView(
+                    appManager: appManager,
+                    whitelistManager: whitelistManager,
+                    quitManager: quitManager
+                )
+
+                // Fixed footer at bottom
+                FooterView(
+                    onQuitAll: handleQuitAll,
+                    isDisabled: appsToQuit.isEmpty,
+                    isQuitting: isQuitting
+                )
             }
         }
-        .frame(width: 360, height: 500)
+        .frame(width: Dimensions.popoverWidth)
+        .frame(minHeight: Dimensions.popoverMinHeight, maxHeight: Dimensions.popoverMaxHeight)
+        .background(popoverBackground)
+        .cornerRadius(Dimensions.popoverCornerRadius)
         .onAppear {
             // Start refreshing when view appears
             appManager.startRefreshing()
 
             // Validate system protection
-            SystemProtection.validateProtection()
+            _ = SystemProtection.validateProtection()
         }
         .onDisappear {
             // Stop refreshing when view disappears
@@ -53,56 +88,70 @@ struct ContentView: View {
         }
     }
 
+    // MARK: - Background
+
+    /// Popover background with accessibility support
+    /// Uses translucent material or solid color based on Reduce Transparency setting
+    @ViewBuilder
+    private var popoverBackground: some View {
+        if reduceTransparency {
+            // Solid color fallback for Reduce Transparency
+            Colors.windowBackground
+                .overlay(
+                    RoundedRectangle(cornerRadius: Dimensions.popoverCornerRadius)
+                        .stroke(Colors.fallbackBorder, lineWidth: 0.5)
+                )
+        } else {
+            // Translucent material background
+            PopoverMaterialBackground()
+        }
+    }
+
     // MARK: - Subviews
 
-    private var header: some View {
+    private var settingsHeader: some View {
         HStack {
-            if showSettings {
-                Button(action: { showSettings = false }) {
+            Button(action: { showSettings = false }) {
+                HStack(spacing: Spacing.xxs) {
                     Image(systemName: "chevron.left")
                     Text("Back")
                 }
-                .buttonStyle(.plain)
-            } else {
-                Text("QuitAll")
-                    .font(.title2.bold())
+                .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
+            .foregroundColor(Colors.primary)
 
             Spacer()
+        }
+        .padding(Spacing.md)
+        .frame(height: Dimensions.headerHeight)
+    }
 
-            if !showSettings {
-                Button(action: { showSettings = true }) {
-                    Image(systemName: "gear")
-                        .imageScale(.medium)
+    // MARK: - Actions
+
+    private func handleQuitAll() {
+        guard !appsToQuit.isEmpty else { return }
+
+        isQuitting = true
+
+        quitManager.quitAllApps(
+            apps: appsToQuit,
+            whitelistManager: whitelistManager,
+            onProgress: { app, result in
+                switch result {
+                case .success:
+                    print("✅ Quit \(app.name)")
+                case .failure(let error):
+                    print("❌ Failed to quit \(app.name): \(error.localizedDescription)")
                 }
-                .buttonStyle(.plain)
+            },
+            onComplete: {
+                isQuitting = false
+                print("✅ Quit all complete")
             }
-        }
-        .padding()
-        .background(Color(nsColor: .windowBackgroundColor))
+        )
     }
 
-    private var mainContent: some View {
-        VStack(spacing: 0) {
-            // App list
-            AppListView(
-                appManager: appManager,
-                whitelistManager: whitelistManager,
-                quitManager: quitManager
-            )
-
-            Divider()
-
-            // Quit all button
-            QuitAllButton(
-                appManager: appManager,
-                whitelistManager: whitelistManager,
-                preferencesManager: preferencesManager,
-                quitManager: quitManager
-            )
-            .padding(.vertical, 8)
-        }
-    }
 }
 
 // MARK: - Preview

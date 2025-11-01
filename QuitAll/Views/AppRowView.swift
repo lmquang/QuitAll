@@ -33,19 +33,21 @@ struct AppRowView: View {
     // MARK: - Body
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: Spacing.sm) {
             // App Icon
             Image(nsImage: app.icon)
                 .resizable()
-                .frame(width: 32, height: 32)
+                .frame(width: Dimensions.iconSize, height: Dimensions.iconSize)
                 .cornerRadius(6)
                 .opacity(isSystemProtected ? 0.6 : 1.0)
+                .accessibilityHidden(true)
 
             // App Name
             Text(app.name)
-                .font(.system(size: 13))
+                .font(Typography.appName)
                 .lineLimit(1)
-                .foregroundColor(isSystemProtected ? .secondary : .primary)
+                .truncationMode(.tail)
+                .foregroundColor(isSystemProtected ? Colors.secondary : Colors.primary)
 
             Spacer()
 
@@ -59,11 +61,11 @@ struct AppRowView: View {
                 whitelistToggle
             }
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 8)
+        .padding(.horizontal, Spacing.md)
+        .frame(height: Dimensions.rowHeight)
         .background(
             RoundedRectangle(cornerRadius: 6)
-                .fill(isHovered ? Color.gray.opacity(0.1) : Color.clear)
+                .fill(isHovered ? Colors.hoverOverlay : Color.clear)
         )
         .onHover { hovering in
             isHovered = hovering

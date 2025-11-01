@@ -22,7 +22,7 @@ struct SettingsView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            VStack(spacing: Spacing.lg) {
                 // General settings
                 generalSection
 
@@ -35,26 +35,29 @@ struct SettingsView: View {
                 // About section
                 aboutSection
             }
-            .padding()
+            .padding(Spacing.md)
         }
     }
 
     // MARK: - Sections
 
     private var generalSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
             Text("General")
-                .font(.headline)
+                .font(Typography.popoverTitle)
+                .foregroundColor(Colors.primary)
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: Spacing.xs) {
                 Toggle("Show confirmation before quit",
                        isOn: $preferencesManager.showConfirmation)
                     .toggleStyle(.switch)
+                    .font(Typography.appName)
 
                 if #available(macOS 13.0, *) {
                     Toggle("Launch at login",
                            isOn: $preferencesManager.launchAtLogin)
                         .toggleStyle(.switch)
+                        .font(Typography.appName)
                 }
             }
         }
@@ -62,29 +65,31 @@ struct SettingsView: View {
     }
 
     private var whitelistSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
             HStack {
                 Text("Persistent Whitelist")
-                    .font(.headline)
+                    .font(Typography.popoverTitle)
+                    .foregroundColor(Colors.primary)
                 Spacer()
                 Text("(\(userWhitelistedApps.count))")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .font(Typography.count)
+                    .foregroundColor(Colors.secondary)
             }
 
             if userWhitelistedApps.isEmpty {
                 Text("No apps whitelisted")
-                    .font(.callout)
-                    .foregroundColor(.secondary)
+                    .font(Typography.description)
+                    .foregroundColor(Colors.secondary)
                     .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.vertical, 8)
+                    .padding(.vertical, Spacing.xs)
             } else {
-                VStack(spacing: 4) {
+                VStack(spacing: Spacing.xxs) {
                     ForEach(userWhitelistedApps, id: \.self) { bundleID in
-                        HStack(spacing: 8) {
+                        HStack(spacing: Spacing.xs) {
                             // App name from bundle ID
                             Text(bundleID.components(separatedBy: ".").last ?? bundleID)
-                                .font(.system(.body, design: .rounded))
+                                .font(Typography.appName)
+                                .foregroundColor(Colors.primary)
                                 .lineLimit(1)
 
                             Spacer()
@@ -93,16 +98,16 @@ struct SettingsView: View {
                                 whitelistManager.removeFromPersistent(bundleID: bundleID)
                             }) {
                                 Image(systemName: "minus.circle.fill")
-                                    .font(.system(size: 16))
-                                    .foregroundColor(.red.opacity(0.8))
+                                    .font(.system(size: Dimensions.iconSize))
+                                    .foregroundColor(Colors.destructive.opacity(0.8))
                             }
                             .buttonStyle(.plain)
                             .help("Remove from whitelist")
                         }
-                        .padding(.vertical, 6)
-                        .padding(.horizontal, 8)
-                        .background(Color.secondary.opacity(0.1))
-                        .cornerRadius(6)
+                        .padding(.vertical, Spacing.xxs + 2)
+                        .padding(.horizontal, Spacing.xs)
+                        .background(Colors.controlBackground.opacity(0.5))
+                        .cornerRadius(Spacing.xxs + 2)
                     }
                 }
             }
@@ -112,18 +117,19 @@ struct SettingsView: View {
 
     private var hotkeySection: some View {
         GroupBox(label: Label("Global Hotkey", systemImage: "keyboard")) {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: Spacing.sm) {
                 // Enable toggle
                 Toggle("Enable Global Hotkey", isOn: $hotkeyManager.isEnabled)
+                    .font(Typography.appName)
                     .help("Allow triggering Quit All with a keyboard shortcut from anywhere")
 
                 Divider()
 
                 // Hotkey recorder
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: Spacing.xs) {
                     Text("Keyboard Shortcut:")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .font(Typography.subtitle)
+                        .foregroundColor(Colors.secondary)
 
                     KeyboardShortcuts.Recorder(for: .quitAllApps)
                         .disabled(!hotkeyManager.isEnabled)
@@ -131,18 +137,18 @@ struct SettingsView: View {
 
                 // Permission status warning
                 if !hotkeyManager.hasPermission && hotkeyManager.isEnabled {
-                    HStack(alignment: .top, spacing: 8) {
+                    HStack(alignment: .top, spacing: Spacing.xs) {
                         Image(systemName: "exclamationmark.triangle.fill")
                             .foregroundColor(.orange)
-                            .font(.system(size: 16))
+                            .font(.system(size: Dimensions.iconSize))
 
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: Spacing.xxs) {
                             Text("Input Monitoring Permission Required")
-                                .font(.subheadline.bold())
+                                .font(Typography.subtitle.weight(.semibold))
 
                             Text("Grant permission in System Settings to use global hotkeys.")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                                .font(Typography.caption)
+                                .foregroundColor(Colors.secondary)
                         }
 
                         Spacer()
@@ -152,18 +158,18 @@ struct SettingsView: View {
                         }
                         .controlSize(.small)
                     }
-                    .padding(10)
+                    .padding(Spacing.xs + 2)
                     .background(Color.orange.opacity(0.1))
-                    .cornerRadius(6)
+                    .cornerRadius(Spacing.xxs + 2)
                 }
 
                 // Help text
                 Text("Press the keyboard shortcut from anywhere to quit all running apps (respecting protected apps). Default: Cmd+Option+Shift+Q")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .font(Typography.caption)
+                    .foregroundColor(Colors.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(8)
+            .padding(Spacing.xs)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -177,23 +183,30 @@ struct SettingsView: View {
     }
 
     private var aboutSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
             Text("About")
-                .font(.headline)
+                .font(Typography.popoverTitle)
+                .foregroundColor(Colors.primary)
 
-            VStack(spacing: 8) {
+            VStack(spacing: Spacing.xs) {
                 HStack {
                     Text("Version")
+                        .font(Typography.appName)
+                        .foregroundColor(Colors.primary)
                     Spacer()
                     Text(AppVersion.displayVersion)
-                        .foregroundColor(.secondary)
+                        .font(Typography.appName)
+                        .foregroundColor(Colors.secondary)
                 }
 
                 HStack {
                     Text("Copyright")
+                        .font(Typography.appName)
+                        .foregroundColor(Colors.primary)
                     Spacer()
                     Text("© 2025")
-                        .foregroundColor(.secondary)
+                        .font(Typography.appName)
+                        .foregroundColor(Colors.secondary)
                 }
             }
         }
